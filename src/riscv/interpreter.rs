@@ -114,7 +114,7 @@ impl Interpreter {
                         self.data_provider.clone(),
                     )))
                     .build();
-                let mut machine = AsmMachine::new(machine);
+                let mut machine = AsmMachine::new(machine, None);
                 machine.load_program(&code, &args[..]).unwrap();
                 let exitcode = machine.run()?;
                 let cycles = machine.machine.cycles();
