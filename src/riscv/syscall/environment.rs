@@ -35,14 +35,14 @@ impl<Mac: ckb_vm::SupportMachine> ckb_vm::Syscalls<Mac> for SyscallEnvironment {
         let code = &machine.registers()[ckb_vm::registers::A7];
         match code.to_i32() {
             SYSCODE_ADDRESS => {
-                let addr = machine.registers()[ckb_vm::registers::A0].to_usize();
+                let addr = machine.registers()[ckb_vm::registers::A0].to_u64();
                 machine.memory_mut().store_bytes(addr, &self.iparams.address)?;
                 machine.set_register(ckb_vm::registers::A0, Mac::REG::from_u8(0));
                 Ok(true)
             }
             SYSCODE_BALANCE => {
-                let addr_addr = machine.registers()[ckb_vm::registers::A0].to_usize();
-                let v_addr = machine.registers()[ckb_vm::registers::A1].to_usize();
+                let addr_addr = machine.registers()[ckb_vm::registers::A0].to_u64();
+                let v_addr = machine.registers()[ckb_vm::registers::A1].to_u64();
 
                 let addr_byte = get_arr(machine, addr_addr, 20)?;
                 let addr_h160 = ethereum_types::Address::from(&addr_byte[..]);
@@ -54,19 +54,19 @@ impl<Mac: ckb_vm::SupportMachine> ckb_vm::Syscalls<Mac> for SyscallEnvironment {
                 Ok(true)
             }
             SYSCODE_ORIGIN => {
-                let addr = machine.registers()[ckb_vm::registers::A0].to_usize();
+                let addr = machine.registers()[ckb_vm::registers::A0].to_u64();
                 machine.memory_mut().store_bytes(addr, &self.iparams.origin)?;
                 machine.set_register(ckb_vm::registers::A0, Mac::REG::from_u8(0));
                 Ok(true)
             }
             SYSCODE_CALLER => {
-                let addr = machine.registers()[ckb_vm::registers::A0].to_usize();
+                let addr = machine.registers()[ckb_vm::registers::A0].to_u64();
                 machine.memory_mut().store_bytes(addr, &self.iparams.sender)?;
                 machine.set_register(ckb_vm::registers::A0, Mac::REG::from_u8(0));
                 Ok(true)
             }
             SYSCODE_CALLVALUE => {
-                let addr = machine.registers()[ckb_vm::registers::A0].to_usize();
+                let addr = machine.registers()[ckb_vm::registers::A0].to_u64();
                 let mut v_byte = [0x00u8; 32];
                 self.iparams.value.to_big_endian(&mut v_byte);
                 machine.memory_mut().store_bytes(addr, &v_byte)?;
@@ -74,28 +74,28 @@ impl<Mac: ckb_vm::SupportMachine> ckb_vm::Syscalls<Mac> for SyscallEnvironment {
                 Ok(true)
             }
             SYSCODE_BLOCKHASH => {
-                let h = machine.registers()[ckb_vm::registers::A0].to_usize();
-                let hash_addr = machine.registers()[ckb_vm::registers::A1].to_usize();
+                let h = machine.registers()[ckb_vm::registers::A0].to_u64();
+                let hash_addr = machine.registers()[ckb_vm::registers::A1].to_u64();
                 let hash_byte = self.data.borrow().get_block_hash(&U256::from(h)).0;
                 machine.memory_mut().store_bytes(hash_addr, &hash_byte)?;
                 machine.set_register(ckb_vm::registers::A0, Mac::REG::from_u8(0));
                 Ok(true)
             }
             SYSCODE_COINBASE => {
-                let addr = machine.registers()[ckb_vm::registers::A0].to_usize();
+                let addr = machine.registers()[ckb_vm::registers::A0].to_u64();
                 machine.memory_mut().store_bytes(addr, &self.context.coinbase)?;
                 machine.set_register(ckb_vm::registers::A0, Mac::REG::from_u8(0));
                 Ok(true)
             }
             SYSCODE_TIMESTAMP => {
-                let addr = machine.registers()[ckb_vm::registers::A0].to_usize();
+                let addr = machine.registers()[ckb_vm::registers::A0].to_u64();
                 let time_byte = self.context.timestamp.to_le_bytes();
                 machine.memory_mut().store_bytes(addr, &time_byte)?;
                 machine.set_register(ckb_vm::registers::A0, Mac::REG::from_u8(0));
                 Ok(true)
             }
             SYSCODE_NUMBER => {
-                let addr = machine.registers()[ckb_vm::registers::A0].to_usize();
+                let addr = machine.registers()[ckb_vm::registers::A0].to_u64();
                 let mut v_byte = [0x00u8; 32];
                 self.context.number.to_big_endian(&mut v_byte);
                 machine.memory_mut().store_bytes(addr, &v_byte)?;
@@ -103,7 +103,7 @@ impl<Mac: ckb_vm::SupportMachine> ckb_vm::Syscalls<Mac> for SyscallEnvironment {
                 Ok(true)
             }
             SYSCODE_DIFFICULTY => {
-                let addr = machine.registers()[ckb_vm::registers::A0].to_usize();
+                let addr = machine.registers()[ckb_vm::registers::A0].to_u64();
                 let mut v_byte = [0x00u8; 32];
                 self.context.difficulty.to_big_endian(&mut v_byte);
                 machine.memory_mut().store_bytes(addr, &v_byte)?;
@@ -111,7 +111,7 @@ impl<Mac: ckb_vm::SupportMachine> ckb_vm::Syscalls<Mac> for SyscallEnvironment {
                 Ok(true)
             }
             SYSCODE_GASLIMIT => {
-                let addr = machine.registers()[ckb_vm::registers::A0].to_usize();
+                let addr = machine.registers()[ckb_vm::registers::A0].to_u64();
                 let gaslimit_byte = self.context.gas_limit.to_le_bytes();
                 machine.memory_mut().store_bytes(addr, &gaslimit_byte)?;
                 machine.set_register(ckb_vm::registers::A0, Mac::REG::from_u8(0));

@@ -1,6 +1,7 @@
 // Provides the ability to interact with state storage.
 use std::cell::RefCell;
 use std::cmp;
+use std::convert::TryInto;
 use std::rc::Rc;
 
 use ckb_vm::instructions::Register;
@@ -83,10 +84,10 @@ impl<Mac: ckb_vm::SupportMachine> ckb_vm::Syscalls<Mac> for SyscallStorage {
 
         // Set storage
         if code.to_i32() == SYSCODE_SAVE {
-            let k_addr = machine.registers()[ckb_vm::registers::A0].to_usize();
-            let k_size = machine.registers()[ckb_vm::registers::A1].to_usize();
-            let v_addr = machine.registers()[ckb_vm::registers::A2].to_usize();
-            let v_size = machine.registers()[ckb_vm::registers::A3].to_usize();
+            let k_addr = machine.registers()[ckb_vm::registers::A0].to_u64();
+            let k_size = machine.registers()[ckb_vm::registers::A1].to_u64();
+            let v_addr = machine.registers()[ckb_vm::registers::A2].to_u64();
+            let v_size = machine.registers()[ckb_vm::registers::A3].to_u64();
             let k = get_arr(machine, k_addr, k_size)?;
             let v = get_arr(machine, v_addr, v_size)?;
 
@@ -102,11 +103,11 @@ impl<Mac: ckb_vm::SupportMachine> ckb_vm::Syscalls<Mac> for SyscallStorage {
 
         // Get storage
         if code.to_i32() == SYSCODE_LOAD {
-            let k_addr = machine.registers()[ckb_vm::registers::A0].to_usize();
-            let k_size = machine.registers()[ckb_vm::registers::A1].to_usize();
-            let v_addr = machine.registers()[ckb_vm::registers::A2].to_usize();
-            let v_size = machine.registers()[ckb_vm::registers::A3].to_usize();
-            let r_addr = machine.registers()[ckb_vm::registers::A4].to_usize();
+            let k_addr = machine.registers()[ckb_vm::registers::A0].to_u64();
+            let k_size = machine.registers()[ckb_vm::registers::A1].to_u64();
+            let v_addr = machine.registers()[ckb_vm::registers::A2].to_u64();
+            let v_size = machine.registers()[ckb_vm::registers::A3].to_u64();
+            let r_addr = machine.registers()[ckb_vm::registers::A4].to_u64();
             let k = get_arr(machine, k_addr, k_size)?;
 
             let k_hash = hash::summary(&k[..]).to_vec();
@@ -133,6 +134,7 @@ impl<Mac: ckb_vm::SupportMachine> ckb_vm::Syscalls<Mac> for SyscallStorage {
                 i = i.saturating_add(U256::one());
             }
 
+            let v_size = v_size.try_into().expect("u64 to usize");
             r.resize(v_size, 0u8);
 
             machine.memory_mut().store_bytes(v_addr, &r)?;

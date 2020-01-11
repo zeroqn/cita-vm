@@ -27,8 +27,8 @@ impl<Mac: ckb_vm::SupportMachine> ckb_vm::Syscalls<Mac> for SyscallRet {
         if code.to_i32() != SYSCODE_RET {
             return Ok(false);
         }
-        let addr = machine.registers()[ckb_vm::registers::A0].to_usize();
-        let size = machine.registers()[ckb_vm::registers::A1].to_usize();
+        let addr = machine.registers()[ckb_vm::registers::A0].to_u64();
+        let size = machine.registers()[ckb_vm::registers::A1].to_u64();
         let buffer = get_arr(machine, addr, size)?;
         self.data.borrow_mut().clear();
         self.data.borrow_mut().extend_from_slice(&buffer[..]);
