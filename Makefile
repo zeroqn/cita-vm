@@ -11,6 +11,7 @@ TARGET := riscv64-unknown-elf
 CC := $(TARGET)-gcc
 LD := $(TARGET)-gcc
 CFLAGS := -Os -DCKB_NO_MMU -D__riscv_soft_float -D__riscv_float_abi_soft
+APP_CFLAGS := $(CFLAGS) -Isrc/riscv/duktape -Ic -Wall -Werror
 LDFLAGS := -lm -Wl,-static -fdata-sections -ffunction-sections -Wl,--gc-sections -Wl,-s
 CURRENT_DIR := $(shell pwd)
 DOCKER_BUILD := docker run -v $(CURRENT_DIR):/src nervos/ckb-riscv-gnu-toolchain:bionic bash -c
@@ -23,6 +24,14 @@ riscv/example/raw:
 riscv/example:
 	$(DOCKER_BUILD) "cd /src && make riscv/example/raw"
 
+riscv/duktape/raw:
+	$(CC) $(APP_CFLAGS) src/riscv/c/entry.c -c -o build/entry.o
+	$(CC) $(APP_CFLAGS) src/riscv/duktape/duktape.c -c -o build/duktape.o
+	$(LD) build/entry.o build/duktape.o -o build/duktape $(LDFLAGS)
+
+riscv/duktape:
+	$(DOCKER_BUILD) "cd /src && make riscv/duktape/raw"
+
 riscv/tests/raw:
 	$(CC) -I./src/riscv/c/ -o ./build/tests/exit_0 ./tests/c/exit_0.c
 	$(CC) -I./src/riscv/c/ -o ./build/tests/exit_1 ./tests/c/exit_1.c
@@ -31,6 +40,7 @@ riscv/tests:
 	$(DOCKER_BUILD) "cd /src && make riscv/tests/raw"
 
 riscv/all: riscv/example \
+	riscv/duktape \
 	riscv/tests
 
 .PHONY: \

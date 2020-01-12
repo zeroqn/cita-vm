@@ -51,6 +51,7 @@ __internal_syscall(long n, long _a0, long _a1, long _a2, long _a3, long _a4, lon
 #define SYSCODE_DIFFICULTY 3014
 #define SYSCODE_GASLIMIT 3015
 
+#define SYSCODE_INTF 3020
 
 // Function pvm_debug accepts a string that contains the text to be written to stdout(It depends on the VM).
 // Params:
@@ -214,6 +215,15 @@ int pvm_difficulty(uint8_t *difficulty)
 int pvm_gaslimit(uint64_t *gaslimit)
 {
     return syscall(SYSCODE_GASLIMIT, gaslimit, 0, 0, 0, 0, 0);
+}
+
+// Function pvm_inft halts the interpreter.
+// Params:
+//   data: a pointer to a bytes buffer in VM memory space denoting where the data located at.
+//   size: max size of the data
+//   r_size: returned size of the data
+int pvm_intf(uint8_t *data, size_t size, size_t *r_size) {
+    return syscall(SYSCODE_INTF, data, size, 0, 0, 0, 0);
 }
 
 #endif

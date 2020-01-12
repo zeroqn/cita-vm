@@ -422,6 +422,12 @@ fn call_pure<B: DB + 'static>(
             let mut it = riscv::Interpreter::new(context, cfg.cfg_riscv, iparams, Rc::new(RefCell::new(data_provider)));
             Ok(it.run()?)
         }
+        InterpreterType::JS => {
+            let snapshot = riscv::get_duktape_snapshot("./build/duktape");
+            let mut it =
+                riscv::InterpreterJS::new(context, iparams, Rc::new(RefCell::new(data_provider)), snapshot.clone());
+            Ok(it.run()?)
+        }
     }
 }
 
