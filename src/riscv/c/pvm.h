@@ -52,6 +52,7 @@ __internal_syscall(long n, long _a0, long _a1, long _a2, long _a3, long _a4, lon
 #define SYSCODE_GASLIMIT 3015
 
 #define SYSCODE_INTF 3020
+#define SYSCODE_BLAKE3 3021
 
 // Function pvm_debug accepts a string that contains the text to be written to stdout(It depends on the VM).
 // Params:
@@ -224,6 +225,19 @@ int pvm_gaslimit(uint64_t *gaslimit)
 //   r_size: returned size of the data
 int pvm_intf(uint8_t *data, size_t size, size_t *r_size) {
     return syscall(SYSCODE_INTF, data, size, 0, 0, 0, 0);
+}
+
+// Function pvm_blake3 hash given message.
+// Params:
+//   msg: a pointer to a buffer in VM memory space denoting where the msg located at.
+//   msg_size: max size of the msg
+//   buf: a pointer to a buffer in VM memory space denoting where save hashed value.
+//   buf_size: max size of buf
+// Return:
+//   code: 0(success), 1(buf size isn't enough)
+int pvm_blake3(uint8_t *msg, size_t msg_size, uint8_t *buf, size_t buf_size)
+{
+    return syscall(SYSCODE_BLAKE3, msg, msg_size, buf, buf_size, 0, 0);
 }
 
 #endif

@@ -20,6 +20,7 @@ riscv/example/raw:
 	$(CC) -I./src/riscv/c/ -o ./build/riscv_c_sdk ./examples/riscv_c_sdk.c
 	$(CC) -I./src/riscv/c/ -o ./build/riscv_c_fibonacci ./examples/riscv_c_fibonacci.c
 	$(CC) -I./src/riscv/c/ -o ./build/riscv_c_simplestorage ./examples/riscv_c_simplestorage.c
+	$(CC) -I./src/riscv/c/ -o ./build/riscv_c_blake3 ./examples/riscv_c_blake3.c
 
 riscv/example:
 	$(DOCKER_BUILD) "cd /src && make riscv/example/raw"

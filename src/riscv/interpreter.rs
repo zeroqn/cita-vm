@@ -91,6 +91,7 @@ impl Interpreter {
                     self.iparams.address,
                     self.data_provider.clone(),
                 )))
+                .syscall(Box::new(riscv::SyscallBlake3))
                 .build();
 
                 machine.load_program(&code, &args[..]).unwrap();
@@ -113,6 +114,7 @@ impl Interpreter {
                         self.iparams.address,
                         self.data_provider.clone(),
                     )))
+                    .syscall(Box::new(riscv::SyscallBlake3))
                     .build();
                 let mut machine = AsmMachine::new(machine, None);
                 machine.load_program(&code, &args[..]).unwrap();

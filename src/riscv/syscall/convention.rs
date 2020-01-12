@@ -14,3 +14,5 @@ pub const SYSCODE_NUMBER: i32 = 3013;
 pub const SYSCODE_DIFFICULTY: i32 = 3014;
 pub const SYSCODE_GASLIMIT: i32 = 3015;
 pub const SYSCODE_INTF: i32 = 3020;
+
+pub const SYSCODE_BLAKE3: i32 = 3021;
