@@ -25,10 +25,13 @@ impl FakeVM {
 
         let block_data_provider: Arc<dyn BlockDataProvider> = Arc::new(BlockDataProviderMock::default());
 
+        let mut config = Config::default();
+        config.block_gas_limit = 8_000_000_000;
+
         Self {
             account1,
             account2,
-            executor: Executive::new(block_data_provider, state, Config::default()),
+            executor: Executive::new(block_data_provider, state, config),
         }
     }
 }
